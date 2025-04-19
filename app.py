@@ -1,4 +1,5 @@
 import os
+import textwrap
 import streamlit as st
 
 from functools import cached_property
@@ -40,8 +41,8 @@ class App:
             return result
         except Exception as e:
             raise RuntimeError(f"Error in review analysis pipeline: {e}")
-        
-    def render_result(self, review_analysis: ReviewAnalysisResult, email: str):
+
+    def render_result(self, review_analysis: ReviewAnalysisResult) -> str:
         md = f"""
         ### ✨ Review Summary
         {review_analysis.summary}
@@ -57,11 +58,10 @@ class App:
 
         ### 😌 Emotions
         {', '.join(review_analysis.emotions) if review_analysis.emotions else 'None'}
-
-        ### \U0001F4E7 Email
-        {email}
         """
+        
         return md
+
 
     def setup_api_key(self) -> bool:
         # Try loading from .env first
@@ -98,7 +98,9 @@ class App:
                 try:
                     review_analysis_result = self.analyze_review(review)
                     email_result = self.email_generator(review_analysis_result.sentiment)
-                    st.markdown(self.render_result(review_analysis_result, email_result.email))
+                    st.markdown(self.render_result(review_analysis_result))
+                    st.subheader("📧 Email")
+                    st.text_area("",value=email_result.email, height=200)
                 except Exception as e:
                     st.error(f"Error analyzing review: {e}")
             else:
