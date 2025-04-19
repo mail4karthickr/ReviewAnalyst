@@ -1,8 +1,9 @@
 from models.review_analysis_result import ReviewAnalysisResult
+
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 
-parser = PydanticOutputParser(pydantic_object=ReviewAnalysisResult)
+review_analysis_parser = PydanticOutputParser(pydantic_object=ReviewAnalysisResult)
 review_analysis_prompt = PromptTemplate(
     template="""
         Analyze the give customer reivew below and generate the response based on the instructions mentioned below in the format instructions.
@@ -14,5 +15,5 @@ review_analysis_prompt = PromptTemplate(
         {review}
     """,
     input_variables=["review"],
-    partial_variables={"format_instructions": parser.get_format_instructions()}
+    partial_variables={"format_instructions": review_analysis_parser.get_format_instructions()}
 )
